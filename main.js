@@ -2,13 +2,15 @@ const {join: createPath} = require("node:path");
 const fs = require("node:fs/promises");
 
 const func = async () => {
-    // await fs.rm(createPath(process.cwd(), 'data'), {recursive: true, force: true});
     await fs.mkdir(createPath(process.cwd(), 'data'), {recursive: true, force: true})
 
     const createDirectories = async (dirs) => {
-        for (const dir of dirs) {
+        // dirs.map(async (dir) => {
+        //     await fs.mkdir(createPath(process.cwd(), 'data', dir), {recursive: true});
+        // })
+        await Promise.all(dirs.map(async (dir) => {
             await fs.mkdir(createPath(process.cwd(), 'data', dir), {recursive: true});
-        }
+        }))
     }
 
 
@@ -19,13 +21,16 @@ const func = async () => {
         }
     }
 
-    const identifyPaths = async (paths) => {
-        for (const path of paths) {
-            const stat = await fs.stat(path);
-            if (stat.isFile()) {
-                console.log(`${path} - file.`);
-            } else if (stat.isDirectory()) {
-                console.log(`${path} - directory.`);
+    const identifyPaths = async (currentPath) => {
+        const data = await fs.readdir(currentPath)
+        for (const item of data) {
+            const fullPath = createPath(currentPath, item)
+            const statItem = await fs.stat(fullPath)
+            if (statItem.isDirectory()) {
+                console.log(fullPath, 'is directory');
+                identifyPaths(fullPath)
+            } else {
+                console.log(fullPath, 'is file')
             }
         }
     };
@@ -33,10 +38,8 @@ const func = async () => {
     await  createDirectories(['dogs', 'cats', 'elephants', 'tigers', 'lions']);
     await  createFilesToDirs(['dogs', 'cats', 'elephants', 'tigers', 'lions'], ['dog', 'cat', 'elephant', 'tiger', 'lion']);
 
-    await  identifyPaths([createPath(process.cwd(), 'data'),
-        createPath(process.cwd(), 'data', 'cats', 'cat.json')]);
+    await  identifyPaths(createPath(process.cwd(), 'data'));
+
 }
 void func()
-
-
 
