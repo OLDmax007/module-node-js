@@ -1,14 +1,19 @@
-const http = require('node:http')
-const path = require('node:path')
+const {createInterface} = require("node:readline/promises");
 
-const pathToUtils = path.join(__dirname, 'utils', 'utils.js')
-const pathToUtilsExp =  path.join('/example', 'utils', 'utils.js')
-console.log(pathToUtils)
-console.log(path.basename(pathToUtils)) //  file
-console.log(path.dirname(pathToUtils)) // the path to file without last file
-console.log(path.extname(pathToUtils)) // file extension
-console.log(path.parse(pathToUtils)) // full desc about a file
-console.log(path.normalize(pathToUtilsExp)) // corrects the path
-console.log(path.isAbsolute(pathToUtils)) // get started symbol '/'
-console.log(path.isAbsolute(pathToUtilsExp))
 
+const func = async () => {
+
+    const rlInstance = createInterface({
+        input: process.stdin,
+        output: process.stdout
+    })
+
+
+    const userName = await rlInstance.question('Enter your name');
+    console.log(userName)
+
+    process.exit(0);
+
+}
+
+void func()
