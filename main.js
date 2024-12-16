@@ -1,26 +1,39 @@
-const {createServer: server} = require('http');
+const { createServer: server } = require('node:http');
 
-server((req, res) => {
-    // console.log(req)
-    console.log(req.method);
-    console.log(req.url);
-    console.log(req.headers);
-    console.log(res.statusCode)
-    console.log(res.messageerror)
+const func = async () => {
+    server((req, res) => {
 
-    if (req.url === '/home') {
-        res.writeHead(200, { 'Content-Type': 'text/plain' });
-        console.log(res.statusCode)
-        console.log(res.messageerror)
-        res.end('Home page');
+        switch (req.url) {
+            case '/users':
+                switch (req.method) {
+                    case 'GET':
+                        res.writeHead(200, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify({ data: 'Users' }));
+                        return;
+                    default:
+                        res.writeHead(405, { 'Content-Type': 'text/plain' });
+                        res.end('Method Not Allowed');
+                        return;
+                }
 
-    } else {
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
-        console.log(res.statusCode)
-        console.log(res.messageerror)
-        res.end('Not found page');
-    }
-}).listen(3333, () => {
-    console.log('http://localhost:3333/home')
-    console.log('http://localhost:3333');
-});
+            case '/posts': switch (req.method) {
+                case 'GET':
+                    res.writeHead(200, { 'Content-Type': 'application/json' })
+                    res.end(JSON.stringify({data: 'Posts'}))
+                    return;
+                default:
+                    res.writeHead(405, { 'Content-Type': 'text/plain' })
+                    res.end('Method Not Allowed');
+                    return;
+            }
+            default:
+                res.writeHead(400, { 'Content-Type': 'text/plain' })
+                res.end('Page not found')
+        }
+
+    }).listen(3000, () => {
+        console.log('Server running at http://localhost:3000');
+    });
+};
+
+void func();
