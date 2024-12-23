@@ -45,7 +45,7 @@ const func = async () => {
 
       if (
         typeof name !== "string" ||
-        typeof age !== "number" ||
+                   typeof age !== "number" ||
         typeof email !== "string" ||
         typeof isActive !== "boolean"
       ) {
