@@ -1,11 +1,16 @@
-require('dotenv').config();
-const express = require('express');
-const { readFile, writeFile } = require('./services/fs.service');
+import dotenv from 'dotenv';
+import express, {Request, Response} from 'express';
+import {readFile, writeFile} from './services/fs.service';
+
+
+dotenv.config();
 const app = express();
 app.use(express.json());
 
+console.log(process.env.PORT)
+
 const func = async () => {
-    app.get('/users', async (req, res) => {
+    app.get('/users', async (req:Request, res:Response):Promise<any> => {
         try {
             const users = await readFile();
             if (!users) {
@@ -13,11 +18,11 @@ const func = async () => {
             }
             return res.json(users);
         } catch (e) {
-            return res.status(500).json({ error: e.message });
+            return res.status(500).json({error: e.message});
         }
     });
 
-    app.get('/users/:userId', async (req, res) => {
+    app.get('/users/:userId', async (req:Request, res:Response):Promise<void> => {
         try {
             const users = await readFile();
             const foundUser = users.find(user => user.id === +req.params.userId);
@@ -26,14 +31,14 @@ const func = async () => {
             }
             return res.json(foundUser);
         } catch (e) {
-            return res.status(500).json({ error: e.message });
+            return res.status(500).json({error: e.message});
         }
     });
 
-    app.post('/users', async (req, res) => {
+    app.post('/users', async (req:Request, res:Response):Promise<void> => {
         try {
             const users = await readFile();
-            const { name, age, email, isActive } = req.body;
+            const {name, age, email, isActive} = req.body;
 
             if (typeof name !== 'string' || typeof age !== 'number' || typeof email !== 'string' || typeof isActive !== 'boolean') {
                 return res.sendStatus(400);
@@ -51,11 +56,11 @@ const func = async () => {
             await writeFile(users);
             return res.sendStatus(204);
         } catch (e) {
-            return res.status(500).json({ error: e.message });
+            return res.status(500).json({error: e.message});
         }
     });
 
-    app.delete('/users/:userId', async (req, res) => {
+    app.delete('/users/:userId', async (req:Request, res:Response):Promise<void> => {
         try {
             const users = await readFile();
             const pmUserId = +req.params.userId;
@@ -69,14 +74,14 @@ const func = async () => {
             await writeFile(users);
             return res.sendStatus(204);
         } catch (e) {
-            return res.status(500).json({ error: e.message });
+            return res.status(500).json({error: e.message});
         }
     });
 
-    app.put('/users/:userId', async (req, res) => {
+    app.put('/users/:userId', async (req:Request, res:Response):Promise<void> => {
         try {
             const users = await readFile();
-            const { name, age, email, isActive } = req.body;
+            const {name, age, email, isActive} = req.body;
             const pmUserId = +req.params.userId;
 
             const foundUserIndex = users.findIndex(user => user.id === pmUserId);
@@ -99,7 +104,7 @@ const func = async () => {
             await writeFile(users);
             return res.sendStatus(204);
         } catch (e) {
-            return res.status(500).json({ error: e.message });
+            return res.status(500).json({error: e.message});
         }
     });
 
