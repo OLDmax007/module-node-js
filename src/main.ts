@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 
+import ApiError from "./errors/api-error";
 import { readFile } from "./services/fs.service";
 
 dotenv.config();
@@ -10,17 +11,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const func = async () => {
-  app.get("/users", async (req: Request, res: Response): Promise<void> => {
-    try {
-      const users = await readFile();
-      if (!users) {
-        res.sendStatus(404);
+  app.get(
+    "/users",
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      try {
+        const users = await readFile();
+        if (!users) {
+          throw new ApiError("Users not found", 404);
+        }
+        res.json(users);
+      } catch (e) {
+        next(e);
       }
-      res.json(users);
-    } catch (e) {
-      res.status(500).json({ error: e.message });
     }
-  });
+  );
 
   // app.get('/users/:userId', async (req, res) => {
   //     try {
@@ -106,6 +110,20 @@ const func = async () => {
   //     } catch (e) {
   //         return res.status(500).json({ error: e.message });
   //     }
+
+  app.use(
+    "*",
+    (error: ApiError, req: Request, res: Response, next: NextFunction) => {
+      const status = error.status || 500;
+      const message = error.message || "Something bad";
+      res.status(status).json({ status, message });
+    }
+  );
+
+  process.on("uncaughtException", (error) => {
+    console.error("Uncaught Exception:", error);
+    process.exit(1);
+  });
 
   app.listen(process.env.PORT, () => {
     console.log(`http://localhost:${process.env.PORT}/users`);
