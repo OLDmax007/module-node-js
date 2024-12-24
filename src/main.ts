@@ -1,39 +1,57 @@
 import dotenv from "dotenv";
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 
+import { ApiError } from "./errors/api-error";
 import { readFile } from "./services/fs.service";
 
 dotenv.config();
 const app = express();
 app.use(express.json());
-console.log(process.env.PORT);
 
 const func = async () => {
-  app.get("/users", async (req: Request, res: Response): Promise<any> => {
-    try {
-      const users = await readFile();
-      if (!users) {
-        return res.sendStatus(404);
+  app.get(
+    "/users",
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      try {
+        const users = await readFile();
+        if (!users) {
+          throw new ApiError("Users not found", 404);
+        }
+        res.json(users);
+      } catch (e) {
+        next(e);
       }
-      return res.json(users);
-    } catch (e) {
-      return res.status(500).json({ error: e.message });
-    }
-  });
+    },
+  );
 
   app.get(
     "/users/:userId",
-    async (req: Request, res: Response): Promise<void> => {
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
         const users = await readFile();
         const foundUser = users.find((user) => user.id === +req.params.userId);
+        console.log(foundUser);
         if (!foundUser) {
-          return res.sendStatus(404);
+          throw new ApiError("User not found", 404);
         }
-        return res.json(foundUser);
+        res.json(foundUser);
       } catch (e) {
-        return res.status(500).json({ error: e.message });
+        next(e);
       }
+    },
+  );
+
+  process.on("uncaughtException", (error) => {
+    console.error("Uncaught Exception:", error);
+    process.exit(1);
+  });
+
+  app.use(
+    "*",
+    (error: ApiError, req: Request, res: Response, next: NextFunction) => {
+      const status = error.status || 500;
+      const message = error.message || "Something went wrong";
+      res.status(status).json({ status, message });
     },
   );
   //
