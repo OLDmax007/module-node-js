@@ -2,44 +2,46 @@ import dotenv from "dotenv";
 import express, { NextFunction, Request, Response } from "express";
 
 import { ApiError } from "./errors/api-error";
-import { readFile } from "./services/fs.service";
+import { userRouter } from "./routes/user.router";
 
 dotenv.config();
 const app = express();
 app.use(express.json());
 
 const func = async () => {
-  app.get(
-    "/users",
-    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-      try {
-        const users = await readFile();
-        if (!users) {
-          throw new ApiError("Users not found", 404);
-        }
-        res.json(users);
-      } catch (e) {
-        next(e);
-      }
-    },
-  );
+  app.use("/users", userRouter);
 
-  app.get(
-    "/users/:userId",
-    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-      try {
-        const users = await readFile();
-        const foundUser = users.find((user) => user.id === +req.params.userId);
-        console.log(foundUser);
-        if (!foundUser) {
-          throw new ApiError("User not found", 404);
-        }
-        res.json(foundUser);
-      } catch (e) {
-        next(e);
-      }
-    },
-  );
+  // app.get(
+  //   "/users",
+  //   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  //     try {
+  //       const users = await readFile();
+  //       if (!users) {
+  //         throw new ApiError("Users not found", 404);
+  //       }
+  //       res.json(users);
+  //     } catch (e) {
+  //       next(e);
+  //     }
+  //   },
+  // );
+  //
+  // app.get(
+  //   "/users/:userId",
+  //   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  //     try {
+  //       const users = await readFile();
+  //       const foundUser = users.find((user) => user.id === +req.params.userId);
+  //       console.log(foundUser);
+  //       if (!foundUser) {
+  //         throw new ApiError("User not found", 404);
+  //       }
+  //       res.json(foundUser);
+  //     } catch (e) {
+  //       next(e);
+  //     }
+  //   },
+  // );
 
   process.on("uncaughtException", (error) => {
     console.error("Uncaught Exception:", error);
