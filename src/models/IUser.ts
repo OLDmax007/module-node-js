@@ -5,3 +5,5 @@ export interface IUser {
   email: string;
   isActive: boolean;
 }
+
+export type TypeUserDto = Omit<IUser, "id">;

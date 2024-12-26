@@ -1,4 +1,4 @@
-import { IUser } from "../models/IUser";
+import { IUser, TypeUserDto } from "../models/IUser";
 import { readFile, writeFile } from "../services/fs.service";
 
 class UserRepository {
@@ -7,13 +7,12 @@ class UserRepository {
   }
 
   public async getById(userId: number): Promise<IUser> {
-    const users: IUser[] = await readFile();
-    const user: IUser = users.find((user) => user.id === userId);
-    return user;
+    const users = await readFile();
+    return users.find((user) => user.id === userId);
   }
 
-  public async create(dto: IUser): Promise<IUser> {
-    const users: IUser[] = await readFile();
+  public async create(dto: TypeUserDto): Promise<IUser> {
+    const users = await readFile();
     const newUser = {
       id: users.length ? users[users.length - 1].id + 1 : 1,
       name: dto.name,
@@ -30,8 +29,8 @@ class UserRepository {
   public async update(dto: IUser, userId: number): Promise<IUser> {
     const { name, age, email, isActive } = dto;
 
-    const users: IUser[] = await readFile();
-    const userIndex: number = users.findIndex((user) => user.id === userId);
+    const users = await readFile();
+    const userIndex = users.findIndex((user) => user.id === userId);
 
     users[userIndex] = {
       id: userId,
@@ -46,13 +45,11 @@ class UserRepository {
     return updatedUser;
   }
 
-  public async delete(userId: number): Promise<IUser> {
-    const users: IUser[] = await readFile();
-    const userIndex: number = users.findIndex((user) => user.id === userId);
-    const deletedUser = users[userIndex];
+  public async delete(userId: number): Promise<void> {
+    const users = await readFile();
+    const userIndex = users.findIndex((user) => user.id === userId);
     users.splice(userIndex, 1);
     await writeFile(users);
-    return deletedUser;
   }
 }
 
