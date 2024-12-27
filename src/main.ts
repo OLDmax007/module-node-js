@@ -1,4 +1,5 @@
 import express, { NextFunction, Request, Response } from "express";
+import mongoose from "mongoose";
 
 import { config } from "./configs/config";
 import ApiError from "./errors/api-error";
@@ -24,8 +25,9 @@ const func = async () => {
     process.exit(1);
   });
 
-  app.listen(config.port, () => {
-    console.log(`http://localhost:${process.env.PORT}/users`);
+  app.listen(config.port, async () => {
+    await mongoose.connect(config.mongoUrl);
+    console.log(`Server has been started on the port ${config.port}`);
   });
 };
 
