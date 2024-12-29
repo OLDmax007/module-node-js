@@ -8,7 +8,9 @@ class CommonMiddleware {
     return (req: Request, res: Response, next: NextFunction) => {
       try {
         const id = req.params[key];
+        console.log(id);
         if (!isObjectIdOrHexString(id)) {
+          console.log("sas");
           throw new ApiError(`Invalid ID: ${id}`, 400);
         }
         next();
@@ -18,39 +20,19 @@ class CommonMiddleware {
     };
   }
 
-  public validateUserData(validator: any) {
-    console.log(validator);
+  public validateBody(validator: any) {
     return (req: Request, res: Response, next: NextFunction) => {
       try {
         const dto = req.body;
-
-        if (
-          typeof dto.name !== "string" ||
-          typeof dto.age !== "number" ||
-          typeof dto.email !== "string"
-        ) {
-          throw new ApiError("Incorrect entered data", 400);
-        }
-
-        if (!dto.name || dto.name.length < 3) {
+        const { error } = validator.validate(dto);
+        if (error) {
           throw new ApiError(
-            "Name is required and should be minimum 3 symbols",
+            `Validation error: ${error.details
+              .map((d) => d.message)
+              .join(", ")}`,
             400
           );
         }
-
-        if (!dto.email || !dto.email.includes("@")) {
-          throw new ApiError("Email is required", 400);
-        }
-
-        if (!dto.password || dto.password.length < 8) {
-          throw new ApiError(
-            "Password is required and should be minimum 8 symbols",
-            400
-          );
-        }
-
-        req.body = dto;
         next();
       } catch (e) {
         next(e);
