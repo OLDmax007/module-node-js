@@ -18,4 +18,5 @@ class UserRepository {
   //
   // public async delete(userId: string): Promise<void> {}
 }
+
 export const userRepository = new UserRepository();
