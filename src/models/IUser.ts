@@ -8,10 +8,14 @@ export interface IUser {
   password: string;
   role?: string;
   phone: string;
-  isDeleted?: boolean;
-  isVerifed?: boolean;
+  isDeleted: boolean;
+  isVerifed: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export type UserDtoType = Pick<IUser, "name" | "age" | "email">;
+export type UserDtoCreateType = Pick<
+  IUser,
+  "name" | "age" | "email" | "password"
+>;
+export type UserDtoUpdateType = Pick<IUser, "name" | "password">;

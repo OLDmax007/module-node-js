@@ -1,4 +1,4 @@
-import { IUser, UserDtoType } from "../models/IUser";
+import { IUser, UserDtoCreateType, UserDtoUpdateType } from "../models/IUser";
 import { User } from "../models/user.model";
 
 class UserRepository {
@@ -10,11 +10,11 @@ class UserRepository {
     return await User.findById(userId);
   }
 
-  public async create(dto: UserDtoType): Promise<any> {
+  public async create(dto: UserDtoCreateType): Promise<any> {
     return await User.create(dto);
   }
 
-  public async update(dto: IUser, userId: string): Promise<IUser> {
+  public async update(dto: UserDtoUpdateType, userId: string): Promise<IUser> {
     return await User.findByIdAndUpdate(userId, dto, { new: true });
   }
 

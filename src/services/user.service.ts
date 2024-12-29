@@ -1,5 +1,5 @@
 import ApiError from "../errors/api-error";
-import { IUser, UserDtoType } from "../models/IUser";
+import { IUser, UserDtoCreateType, UserDtoUpdateType } from "../models/IUser";
 import { userRepository } from "../repositories/user.repository";
 
 class UserService {
@@ -20,7 +20,7 @@ class UserService {
     return user;
   }
 
-  public async create(dto: UserDtoType): Promise<IUser> {
+  public async create(dto: UserDtoCreateType): Promise<IUser> {
     const user = await userRepository.create(dto);
     if (!user) {
       throw new ApiError("User not found", 404);
@@ -29,7 +29,7 @@ class UserService {
     return user;
   }
 
-  public async update(dto: IUser, userId: string): Promise<IUser> {
+  public async update(dto: UserDtoUpdateType, userId: string): Promise<IUser> {
     const user = await userRepository.update(dto, userId);
     if (!user) {
       throw new ApiError("User not found", 404);

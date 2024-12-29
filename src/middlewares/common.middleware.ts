@@ -27,7 +27,7 @@ class CommonMiddleware {
         const { error } = validator.validate(dto);
         if (error) {
           throw new ApiError(
-            `Validation error: ${error.details
+            `Validation erorr: ${error.details
               .map((d) => d.message)
               .join(", ")}`,
             400
