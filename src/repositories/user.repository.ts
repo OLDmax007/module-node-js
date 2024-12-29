@@ -1,55 +1,25 @@
-import { IUser, TypeUserDto } from "../models/IUser";
-import { readFile, writeFile } from "../services/fs.service";
+import { IUser, UserDtoType } from "../models/IUser";
+import { User } from "../models/user.model";
 
 class UserRepository {
   public async getItems(): Promise<IUser[]> {
-    return await readFile();
+    return await User.find();
   }
 
-  public async getById(userId: number): Promise<IUser> {
-    const users = await readFile();
-    return users.find((user) => user.id === userId);
+  public async getById(userId: string): Promise<IUser> {
+    return await User.findById(userId);
   }
 
-  public async create(dto: TypeUserDto): Promise<IUser> {
-    const users = await readFile();
-    const newUser = {
-      id: users.length ? users[users.length - 1].id + 1 : 1,
-      name: dto.name,
-      age: dto.age,
-      email: dto.email,
-      isActive: dto.isActive,
-    };
-
-    users.push(newUser);
-    await writeFile(users);
-    return newUser;
+  public async create(dto: UserDtoType): Promise<any> {
+    return await User.create(dto);
   }
 
-  public async update(dto: IUser, userId: number): Promise<IUser> {
-    const { name, age, email, isActive } = dto;
-
-    const users = await readFile();
-    const userIndex = users.findIndex((user) => user.id === userId);
-
-    users[userIndex] = {
-      id: userId,
-      name,
-      age,
-      email,
-      isActive,
-    };
-
-    const updatedUser: IUser = users[userIndex];
-    await writeFile(users);
-    return updatedUser;
+  public async update(dto: IUser, userId: string): Promise<IUser> {
+    return await User.findByIdAndUpdate(userId, dto, { new: true });
   }
 
-  public async delete(userId: number): Promise<void> {
-    const users = await readFile();
-    const userIndex = users.findIndex((user) => user.id === userId);
-    users.splice(userIndex, 1);
-    await writeFile(users);
+  public async delete(userId: string): Promise<void> {
+    await User.deleteOne({ _id: userId });
   }
 }
 

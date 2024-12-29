@@ -1,5 +1,5 @@
 import ApiError from "../errors/api-error";
-import { IUser, TypeUserDto } from "../models/IUser";
+import { IUser, UserDtoType } from "../models/IUser";
 import { userRepository } from "../repositories/user.repository";
 
 class UserService {
@@ -11,7 +11,7 @@ class UserService {
     return users;
   }
 
-  public async getById(userId: number): Promise<IUser> {
+  public async getById(userId: string): Promise<IUser> {
     const user = await userRepository.getById(userId);
     if (!user) {
       throw new ApiError("User not found", 404);
@@ -20,15 +20,7 @@ class UserService {
     return user;
   }
 
-  public async create(dto: TypeUserDto): Promise<IUser> {
-    if (
-      typeof dto.name !== "string" ||
-      typeof dto.age !== "number" ||
-      typeof dto.email !== "string" ||
-      typeof dto.isActive !== "boolean"
-    ) {
-      throw new ApiError("Incorrect entered data", 400);
-    }
+  public async create(dto: UserDtoType): Promise<IUser> {
     const user = await userRepository.create(dto);
     if (!user) {
       throw new ApiError("User not found", 404);
@@ -37,7 +29,7 @@ class UserService {
     return user;
   }
 
-  public async update(dto: IUser, userId: number): Promise<IUser> {
+  public async update(dto: IUser, userId: string): Promise<IUser> {
     const user = await userRepository.update(dto, userId);
     if (!user) {
       throw new ApiError("User not found", 404);
@@ -45,7 +37,7 @@ class UserService {
     return user;
   }
 
-  public async delete(userId: number): Promise<void> {
+  public async delete(userId: string): Promise<void> {
     const user = await userRepository.getById(userId);
     if (!user) {
       throw new ApiError("User not found", 404);

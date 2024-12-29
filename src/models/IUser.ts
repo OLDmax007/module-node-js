@@ -1,9 +1,17 @@
+import { Types } from "mongoose";
+
 export interface IUser {
-  id: number;
+  _id: Types.ObjectId;
   name: string;
   age: number;
   email: string;
-  isActive: boolean;
+  password: string;
+  role?: string;
+  phone: string;
+  isDeleted?: boolean;
+  isVerifed?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export type TypeUserDto = Omit<IUser, "id">;
+export type UserDtoType = Pick<IUser, "name" | "age" | "email">;

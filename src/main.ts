@@ -1,11 +1,9 @@
-import dotenv from "dotenv";
 import express, { NextFunction, Request, Response } from "express";
+import mongoose from "mongoose";
 
+import config from "./configs/config";
 import ApiError from "./errors/api-error";
 import { userRouter } from "./routes/user.router";
-// import { readFile } from "./services/fs.service";
-
-dotenv.config();
 
 const app = express();
 app.use(express.json());
@@ -27,8 +25,8 @@ const func = async () => {
     process.exit(1);
   });
 
-  app.listen(process.env.PORT, () => {
-    console.log(`http://localhost:${process.env.PORT}/users`);
+  app.listen(config.port, async () => {
+    await mongoose.connect(config.mongoUrl);
   });
 };
 
