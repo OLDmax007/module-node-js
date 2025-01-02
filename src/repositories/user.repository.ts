@@ -10,7 +10,11 @@ class UserRepository {
     return await User.findById(userId);
   }
 
-  public async create(dto: UserDtoCreateType): Promise<any> {
+  public async getByEmail(email: string): Promise<IUser> {
+    return await User.findOne({ email });
+  }
+
+  public async create(dto: UserDtoCreateType): Promise<IUser> {
     return await User.create(dto);
   }
 

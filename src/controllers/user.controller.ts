@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
+import { UserDtoCreateType, UserDtoUpdateType } from "../models/IUser";
 import { userService } from "../services/user.service";
 
 class UserController {
@@ -23,7 +24,7 @@ class UserController {
 
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const dto = req.body;
+      const dto = req.body as UserDtoCreateType;
       const result = await userService.create(dto);
       res.status(201).json(result);
     } catch (e) {
@@ -33,7 +34,7 @@ class UserController {
 
   public async update(req: Request, res: Response, next: NextFunction) {
     try {
-      const dto = req.body;
+      const dto = req.body as UserDtoUpdateType;
       const result = await userService.update(dto, req.params.userId);
       res.json(result);
     } catch (e) {

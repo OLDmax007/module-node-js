@@ -1,48 +1,34 @@
-import ApiError from "../errors/api-error";
+import { ApiError } from "../errors/api-error";
 import { IUser, UserDtoCreateType, UserDtoUpdateType } from "../models/IUser";
 import { userRepository } from "../repositories/user.repository";
 
 class UserService {
   public async getItems(): Promise<IUser[]> {
-    const users = await userRepository.getItems();
-    if (!users) {
-      throw new ApiError("User not found", 404);
-    }
-    return users;
+    return await userRepository.getItems();
   }
 
   public async getById(userId: string): Promise<IUser> {
-    const user = await userRepository.getById(userId);
-    if (!user) {
-      throw new ApiError("User not found", 404);
-    }
-
-    return user;
+    return await userRepository.getById(userId);
   }
 
   public async create(dto: UserDtoCreateType): Promise<IUser> {
-    const user = await userRepository.create(dto);
-    if (!user) {
-      throw new ApiError("User not found", 404);
-    }
-
-    return user;
+    await this.isEmailUnique(dto.email);
+    return await userRepository.create(dto);
   }
 
   public async update(dto: UserDtoUpdateType, userId: string): Promise<IUser> {
-    const user = await userRepository.update(dto, userId);
-    if (!user) {
-      throw new ApiError("User not found", 404);
-    }
-    return user;
+    return await userRepository.update(dto, userId);
   }
 
   public async delete(userId: string): Promise<void> {
-    const user = await userRepository.getById(userId);
-    if (!user) {
-      throw new ApiError("User not found", 404);
-    }
     await userRepository.delete(userId);
+  }
+
+  private async isEmailUnique(email: string): Promise<void> {
+    const user = await userRepository.getByEmail(email);
+    if (user) {
+      throw new ApiError("Email is already in use", 409);
+    }
   }
 }
 

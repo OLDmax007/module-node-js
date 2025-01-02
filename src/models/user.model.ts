@@ -1,6 +1,7 @@
 import { model, Schema } from "mongoose";
 
 import { RoleEnum } from "../enums/role.enum";
+import { IUser } from "./IUser";
 
 const userSchema = new Schema(
   {
@@ -25,4 +26,4 @@ const userSchema = new Schema(
   }
 );
 
-export const User = model("users", userSchema);
+export const User = model<IUser>("users", userSchema);
