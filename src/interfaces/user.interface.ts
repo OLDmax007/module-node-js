@@ -18,3 +18,4 @@ export interface IUser {
 
 export type IUserCreate = Pick<IUser, "name" | "age" | "email" | "password">;
 export type IUserUpdate = Pick<IUser, "name" | "password">;
+export type ILogin = Pick<IUser, "email" | "password">;

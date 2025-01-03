@@ -94,4 +94,9 @@ export class UserValidator {
     isDeleted: this.isDeleted,
     isVerified: this.isVerified,
   });
+
+  public static login = Joi.object({
+    email: this.email.required(),
+    password: this.password.required(),
+  });
 }

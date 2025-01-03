@@ -9,11 +9,11 @@ export interface IToken {
   updatedAt: Date;
 }
 
-export interface ITokenPair {
-  accessToken: string;
-  refreshToken: string;
-}
+export type ITokenPair = Pick<IToken, "accessToken" | "refreshToken">;
+
 export interface ITokenPayload {
   userId: string;
   role: RoleEnum;
 }
+
+export type ITokenPairWithUserId = ITokenPair & { _userId: string };
