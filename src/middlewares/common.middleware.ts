@@ -32,12 +32,3 @@ class CommonMiddleware {
 }
 
 export const commonMiddleware = new CommonMiddleware();
-
-// if (error) {
-//   throw new ApiError(
-//       `Validation erorr: ${error.details
-//           .map((d) => d.message)
-//           .join(", ")}`,
-//       400
-//   );
-// }

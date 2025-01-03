@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
-import { UserDtoCreateType, UserDtoUpdateType } from "../models/IUser";
+import { ITokenPayload } from "../interfaces/token.interface";
+import { IUserUpdate } from "../interfaces/user.interface";
 import { userService } from "../services/user.service";
 
 class UserController {
@@ -22,11 +23,11 @@ class UserController {
     }
   }
 
-  public async create(req: Request, res: Response, next: NextFunction) {
+  public async getMe(req: Request, res: Response, next: NextFunction) {
     try {
-      const dto = req.body as UserDtoCreateType;
-      const result = await userService.create(dto);
-      res.status(201).json(result);
+      const tokenPayload = req.res.locals.tokenPayload as ITokenPayload;
+      const result = await userService.getMe(tokenPayload);
+      res.json(result);
     } catch (e) {
       next(e);
     }
@@ -34,8 +35,9 @@ class UserController {
 
   public async update(req: Request, res: Response, next: NextFunction) {
     try {
-      const dto = req.body as UserDtoUpdateType;
-      const result = await userService.update(dto, req.params.userId);
+      const tokenPayload = req.res.locals.tokenPayload as ITokenPayload;
+      const dto = req.body as IUserUpdate;
+      const result = await userService.update(dto, tokenPayload);
       res.json(result);
     } catch (e) {
       next(e);
@@ -44,7 +46,8 @@ class UserController {
 
   public async delete(req: Request, res: Response, next: NextFunction) {
     try {
-      await userService.delete(req.params.userId);
+      const tokenPayload = req.res.locals.tokenPayload as ITokenPayload;
+      await userService.delete(tokenPayload);
       res.sendStatus(204);
     } catch (e) {
       next(e);

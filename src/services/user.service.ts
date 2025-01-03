@@ -1,5 +1,6 @@
 import { ApiError } from "../errors/api-error";
-import { IUser, UserDtoCreateType, UserDtoUpdateType } from "../models/IUser";
+import { ITokenPayload } from "../interfaces/token.interface";
+import { IUser, IUserUpdate } from "../interfaces/user.interface";
 import { userRepository } from "../repositories/user.repository";
 
 class UserService {
@@ -11,20 +12,22 @@ class UserService {
     return await userRepository.getById(userId);
   }
 
-  public async create(dto: UserDtoCreateType): Promise<IUser> {
-    await this.isEmailUnique(dto.email);
-    return await userRepository.create(dto);
+  public async getMe(tokenPayload: ITokenPayload): Promise<IUser> {
+    return await userRepository.getById(tokenPayload.userId);
   }
 
-  public async update(dto: UserDtoUpdateType, userId: string): Promise<IUser> {
-    return await userRepository.update(dto, userId);
+  public async update(
+    dto: IUserUpdate,
+    tokenPayload: ITokenPayload
+  ): Promise<IUser> {
+    return await userRepository.update(dto, tokenPayload.userId);
   }
 
-  public async delete(userId: string): Promise<void> {
-    await userRepository.delete(userId);
+  public async delete(tokenPayload: ITokenPayload): Promise<void> {
+    await userRepository.delete(tokenPayload.userId);
   }
 
-  private async isEmailUnique(email: string): Promise<void> {
+  public async isEmailUnique(email: string): Promise<void> {
     const user = await userRepository.getByEmail(email);
     if (user) {
       throw new ApiError("Email is already in use", 409);

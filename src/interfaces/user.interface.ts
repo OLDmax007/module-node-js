@@ -1,21 +1,20 @@
 import { Types } from "mongoose";
 
+import { RoleEnum } from "../enums/role.enum";
+
 export interface IUser {
   _id: Types.ObjectId;
   name: string;
   age: number;
   email: string;
   password: string;
-  role?: string;
-  phone: string;
+  role: RoleEnum;
+  phone?: string;
   isDeleted: boolean;
   isVerifed: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export type UserDtoCreateType = Pick<
-  IUser,
-  "name" | "age" | "email" | "password"
->;
-export type UserDtoUpdateType = Pick<IUser, "name" | "password">;
+export type IUserCreate = Pick<IUser, "name" | "age" | "email" | "password">;
+export type IUserUpdate = Pick<IUser, "name" | "password">;

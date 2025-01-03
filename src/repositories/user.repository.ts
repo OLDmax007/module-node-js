@@ -1,4 +1,4 @@
-import { IUser, UserDtoCreateType, UserDtoUpdateType } from "../models/IUser";
+import { IUser, IUserCreate, IUserUpdate } from "../interfaces/user.interface";
 import { User } from "../models/user.model";
 
 class UserRepository {
@@ -14,11 +14,11 @@ class UserRepository {
     return await User.findOne({ email });
   }
 
-  public async create(dto: UserDtoCreateType): Promise<IUser> {
+  public async create(dto: IUserCreate): Promise<IUser> {
     return await User.create(dto);
   }
 
-  public async update(dto: UserDtoUpdateType, userId: string): Promise<IUser> {
+  public async update(dto: IUserUpdate, userId: string): Promise<IUser> {
     return await User.findByIdAndUpdate(userId, dto, { new: true });
   }
 
