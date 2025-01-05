@@ -1,6 +1,7 @@
 import Joi from "joi";
 
 import { regexConstant } from "../constants/regex.constant";
+import { RoleEnum } from "../enums/role.enum";
 
 export class UserValidator {
   private static name = Joi.string()
@@ -53,7 +54,7 @@ export class UserValidator {
   });
 
   private static role = Joi.string()
-    .valid("admin", "user")
+    .valid(...Object.values(RoleEnum))
     .default("user")
     .messages({
       "any.only": "The role must be one of 'admin' or 'user'",

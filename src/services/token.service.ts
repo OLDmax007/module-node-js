@@ -23,10 +23,10 @@ class TokenService {
       let secret: string;
 
       switch (type) {
-        case "access":
+        case TokenTypeEnum.ACCESS:
           secret = config.jwt.accessSecret;
           break;
-        case "refresh":
+        case TokenTypeEnum.REFRESH:
           secret = config.jwt.refreshSecret;
           break;
         default:
