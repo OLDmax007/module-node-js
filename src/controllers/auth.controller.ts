@@ -36,6 +36,29 @@ class AuthController {
       next(e);
     }
   }
-}
 
+  public async logout(req: Request, res: Response, next: NextFunction) {
+    try {
+      const tokenPayload = req.res.locals.tokenPayload as ITokenPayload;
+      console.log(tokenPayload);
+      const accessToken = req.res.locals.accessToken as string;
+      await authService.logout(accessToken, tokenPayload);
+      res.status(204).json({ message: "You have exited from app" });
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async logoutAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      const tokenPayload = req.res.locals.tokenPayload as ITokenPayload;
+      await authService.logoutAll(tokenPayload);
+      res
+        .status(204)
+        .json({ message: "You have exited from app (all your devices)" });
+    } catch (e) {
+      next(e);
+    }
+  }
+}
 export const authController = new AuthController();

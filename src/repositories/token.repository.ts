@@ -7,7 +7,11 @@ class TokenRepository {
   }
 
   public async deleteOneByParams(params: Partial<IToken>): Promise<void> {
-    await Token.deleteOne({ params });
+    await Token.deleteOne(params);
+  }
+
+  public async deleteAllByParams(params: Partial<IToken>): Promise<void> {
+    await Token.deleteMany(params);
   }
 
   public async findByParams(params: Partial<IToken>): Promise<IToken> {

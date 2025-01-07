@@ -2,7 +2,7 @@ import { RoleEnum } from "../enums/role.enum";
 
 export interface IToken {
   _id: string;
-  userId: string;
+  _userId: string;
   accessToken: string;
   refreshToken: string;
   createdAt: Date;

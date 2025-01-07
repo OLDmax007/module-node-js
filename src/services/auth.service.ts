@@ -48,6 +48,7 @@ class AuthService {
     if (!isPasswordCorrect) {
       throw new ApiError("Incorrect email or password", 401);
     }
+    await tokenRepository.deleteAllByParams({ _userId: user._id.toString() });
     const tokens = tokenService.generateToken({
       userId: user._id.toString(),
       role: RoleEnum.USER,
@@ -60,8 +61,6 @@ class AuthService {
     tokenPayload: ITokenPayload,
     refreshToken: string
   ): Promise<ITokenPair> {
-    console.log(tokenPayload);
-    console.log(refreshToken);
     await tokenRepository.deleteOneByParams({ refreshToken });
     const tokens = tokenService.generateToken({
       userId: tokenPayload.userId,
@@ -71,6 +70,29 @@ class AuthService {
     await tokenRepository.create({ ...tokens, _userId: tokenPayload.userId });
 
     return tokens;
+  }
+
+  public async logout(
+    accessToken: string,
+    tokenPayload: ITokenPayload
+  ): Promise<void> {
+    const user = await userRepository.getById(tokenPayload.userId);
+    await tokenRepository.deleteOneByParams({ accessToken });
+    await emailService.sendEmail(
+      "maxsim.dobrovolskyimd@gmail.com",
+      EmailTypeEnum.LOGOUT,
+      { name: user.name, frontUrl: config.frontUrl }
+    );
+  }
+
+  public async logoutAll(tokenPayload: ITokenPayload): Promise<void> {
+    const user = await userRepository.getById(tokenPayload.userId);
+    await tokenRepository.deleteAllByParams({ _userId: tokenPayload.userId });
+    await emailService.sendEmail(
+      "maxsim.dobrovolskyimd@gmail.com",
+      EmailTypeEnum.LOGOUT,
+      { name: user.name, frontUrl: config.frontUrl }
+    );
   }
 }
 
