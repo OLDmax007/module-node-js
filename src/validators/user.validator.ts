@@ -35,14 +35,14 @@ export class UserValidator {
   private static email = Joi.string()
     .regex(regexConstant.EMAIL)
     .min(3)
-    .max(20)
+    .max(50)
     .trim()
     .messages({
       "string.base": "The email must be a string",
       "string.empty": "The email can not be empty",
       "any.required": "The email must be entered",
       "string.min": "The email must be no less than 3 letters",
-      "string.max": "The email must be no larger than 20 letters",
+      "string.max": "The email must be no larger than 50 letters",
       "string.pattern.base": "The email is not valid",
     });
 
