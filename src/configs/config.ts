@@ -13,6 +13,7 @@ const config = {
   },
   smtpEmail: process.env.SMTP_EMAIL,
   smtpPassword: process.env.SMTP_PASSWORD,
+  frontUrl: process.env.FRONT_URL,
 };
 
 export default config;

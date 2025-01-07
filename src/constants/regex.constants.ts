@@ -1,4 +1,4 @@
-export const regexConstant = {
+export const regexConstants = {
   NAME: /^[a-zA-Z]+$/,
   EMAIL: /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/,
   PASSWORD:
