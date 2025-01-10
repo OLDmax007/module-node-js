@@ -20,7 +20,7 @@ class UserService {
     dto: IUserUpdate,
     tokenPayload: ITokenPayload
   ): Promise<IUser> {
-    return await userRepository.update(dto, tokenPayload.userId);
+    return await userRepository.update(tokenPayload.userId, dto);
   }
 
   public async delete(tokenPayload: ITokenPayload): Promise<void> {

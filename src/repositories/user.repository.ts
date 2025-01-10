@@ -1,4 +1,4 @@
-import { IUser, IUserCreate, IUserUpdate } from "../interfaces/user.interface";
+import { IUser, IUserCreate } from "../interfaces/user.interface";
 import { User } from "../models/user.model";
 
 class UserRepository {
@@ -18,7 +18,7 @@ class UserRepository {
     return await User.create(dto);
   }
 
-  public async update(dto: IUserUpdate, userId: string): Promise<IUser> {
+  public async update(userId: string, dto: Partial<IUser>): Promise<IUser> {
     return await User.findByIdAndUpdate(userId, dto, { new: true });
   }
 

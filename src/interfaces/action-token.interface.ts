@@ -1,19 +1,10 @@
-import { RoleEnum } from "../enums/role.enum";
+import { ActionTokenTypeEnum } from "../enums/action-token-type.enum";
 
-export interface IToken {
+export interface IActionToken {
   _id: string;
   _userId: string;
-  accessToken: string;
-  refreshToken: string;
+  type: ActionTokenTypeEnum;
+  token: string;
   createdAt: Date;
   updatedAt: Date;
 }
-
-export type ITokenPair = Pick<IToken, "accessToken" | "refreshToken">;
-
-export interface ITokenPayload {
-  userId: string;
-  role: RoleEnum;
-}
-
-export type ITokenPairWithUserId = ITokenPair & { _userId: string };

@@ -1,12 +1,14 @@
 import { model, Schema } from "mongoose";
 
-import { IToken } from "../interfaces/token.interface";
+import { ActionTokenTypeEnum } from "../enums/action-token-type.enum";
+import { IActionToken } from "../interfaces/action-token.interface";
 import { User } from "./user.model";
 
 const actionTokenSchema = new Schema(
   {
     _userId: { type: Schema.Types.ObjectId, required: true, ref: User },
     token: { type: String, required: true },
+    type: { type: String, required: true, enum: ActionTokenTypeEnum },
   },
   {
     timestamps: true,
@@ -14,4 +16,7 @@ const actionTokenSchema = new Schema(
   }
 );
 
-export const ActionToken = model<IToken>("action-tokens", actionTokenSchema);
+export const ActionToken = model<IActionToken>(
+  "action-tokens",
+  actionTokenSchema
+);

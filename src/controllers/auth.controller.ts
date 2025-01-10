@@ -1,7 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 
 import { ITokenPayload } from "../interfaces/token.interface";
-import { ILogin, IUserCreate } from "../interfaces/user.interface";
+import {
+  IForgotPassword,
+  IForgotPasswordSet,
+  ILogin,
+  IUserCreate,
+} from "../interfaces/user.interface";
 import { authService } from "../services/auth.service";
 
 class AuthController {
@@ -40,7 +45,6 @@ class AuthController {
   public async logout(req: Request, res: Response, next: NextFunction) {
     try {
       const tokenPayload = req.res.locals.tokenPayload as ITokenPayload;
-      console.log(tokenPayload);
       const accessToken = req.res.locals.accessToken as string;
       await authService.logout(accessToken, tokenPayload);
       res.status(204).json({ message: "You have exited from app" });
@@ -56,6 +60,30 @@ class AuthController {
       res
         .status(204)
         .json({ message: "You have exited from app (all your devices)" });
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async forgotPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const dto = req.body as IForgotPassword;
+      await authService.forgotPassword(dto);
+      res.sendStatus(204);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async forgotPasswordSet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const dto = req.body as IForgotPasswordSet;
+      await authService.forgotPasswordSet(dto);
+      res.sendStatus(204);
     } catch (e) {
       next(e);
     }
