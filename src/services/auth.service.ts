@@ -144,7 +144,7 @@ class AuthService {
     const password = await passwordService.hashPassword(dto.password);
     await userRepository.update(payload.userId, { password });
     await actionTokenRepository.deleteOneByParams({ token: dto.token });
-    await tokenRepository.deleteOneByParams({ _userId: payload.userId });
+    await tokenRepository.deleteAllByParams({ _userId: payload.userId });
   }
 }
 
