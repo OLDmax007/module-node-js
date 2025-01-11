@@ -45,4 +45,10 @@ router.post(
   authController.forgotPasswordSet
 );
 
+router.post(
+  "/email-verification",
+  commonMiddleware.validateBody(UserValidator.emailVerification),
+  authController.emailVerification
+);
+
 export const authRouter = router;

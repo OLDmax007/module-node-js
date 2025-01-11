@@ -21,3 +21,4 @@ export type IUserUpdate = Pick<IUser, "name" | "password">;
 export type ILogin = Pick<IUser, "email" | "password">;
 export type IForgotPassword = Pick<IUser, "email">;
 export type IForgotPasswordSet = Pick<IUser, "password"> & { token: string };
+export type IEmailVerification = Pick<IUser, "email"> & { token: string };

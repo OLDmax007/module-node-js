@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { ITokenPayload } from "../interfaces/token.interface";
 import {
+  IEmailVerification,
   IForgotPassword,
   IForgotPasswordSet,
   ILogin,
@@ -84,6 +85,20 @@ class AuthController {
       const dto = req.body as IForgotPasswordSet;
       await authService.forgotPasswordSet(dto);
       res.sendStatus(204);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async emailVerification(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const dto = req.body as IEmailVerification;
+      const result = await authService.emailVerification(dto);
+      res.status(201).json(result);
     } catch (e) {
       next(e);
     }

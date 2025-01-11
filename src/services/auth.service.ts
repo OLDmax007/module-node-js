@@ -5,6 +5,7 @@ import { RoleEnum } from "../enums/role.enum";
 import { ApiError } from "../errors/api-error";
 import { ITokenPair, ITokenPayload } from "../interfaces/token.interface";
 import {
+  IEmailVerification,
   IForgotPassword,
   IForgotPasswordSet,
   ILogin,
@@ -20,24 +21,33 @@ import { tokenService } from "./token.service";
 import { userService } from "./user.service";
 
 class AuthService {
-  public async singUp(
-    dto: IUserCreate
-  ): Promise<{ user: IUser; tokens: ITokenPair }> {
+  public async singUp(dto: IUserCreate): Promise<{ user: IUser }> {
     await userService.isEmailUnique(dto.email);
     const password = await passwordService.hashPassword(dto.password);
     const user = await userRepository.create({ ...dto, password });
-    const tokens = tokenService.generateTokens({
-      userId: user._id.toString(),
-      role: RoleEnum.USER,
-    });
 
-    await tokenRepository.create({ ...tokens, _userId: user._id.toString() });
-    await emailService.sendEmail(
-      "maxsim.dobrovolskyimd@gmail.com",
-      EmailTypeEnum.WELCOME,
-      { name: dto.name, frontUrl: config.frontUrl }
+    const token = tokenService.generateActionToken(
+      {
+        userId: user._id.toString(),
+        role: user.role,
+      },
+      ActionTokenTypeEnum.EMAIL_VERIFICATION
     );
-    return { user, tokens };
+
+    await Promise.all([
+      actionTokenRepository.create({
+        _userId: user._id.toString(),
+        token,
+        type: ActionTokenTypeEnum.EMAIL_VERIFICATION,
+      }),
+      emailService.sendEmail(
+        "maxsim.dobrovolskyimd@gmail.com",
+        EmailTypeEnum.WELCOME,
+        { name: dto.name, frontUrl: config.frontUrl, actionToken: token }
+      ),
+    ]);
+
+    return { user };
   }
 
   public async singIn(
@@ -145,6 +155,34 @@ class AuthService {
     await userRepository.update(payload.userId, { password });
     await actionTokenRepository.deleteOneByParams({ token: dto.token });
     await tokenRepository.deleteAllByParams({ _userId: payload.userId });
+  }
+
+  public async emailVerification(dto: IEmailVerification): Promise<ITokenPair> {
+    const payload = tokenService.verifyToken(
+      dto.token,
+      ActionTokenTypeEnum.EMAIL_VERIFICATION
+    );
+
+    const entity = await actionTokenRepository.findByParams({
+      token: dto.token,
+    });
+
+    if (!entity) {
+      throw new ApiError("Invalid token", 401);
+    }
+
+    const tokens = tokenService.generateTokens({
+      userId: payload.userId,
+      role: RoleEnum.USER,
+    });
+
+    await Promise.all([
+      userRepository.update(payload.userId, { isVerifed: true }),
+      tokenRepository.create({ ...tokens, _userId: payload.userId }),
+      actionTokenRepository.deleteOneByParams({ _userId: payload.userId }),
+    ]);
+
+    return tokens;
   }
 }
 

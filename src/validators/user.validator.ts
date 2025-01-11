@@ -104,4 +104,9 @@ export class UserValidator {
   public static forgotPassword = Joi.object({
     email: this.email.required(),
   });
+
+  public static emailVerification = Joi.object({
+    email: this.email.required(),
+    token: Joi.string().trim().required(),
+  });
 }

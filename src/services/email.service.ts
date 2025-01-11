@@ -40,7 +40,6 @@ class EmailService {
   ): Promise<void> {
     const { subject, template } = emailConstants[type];
     const options = {
-      from: "vitya.docs@gmail.com",
       to: email,
       subject,
       template,
